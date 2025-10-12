@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hey, Baby!</title>
+  <style>
+    :root {
+      /* Wine → Rose palette */
+      --wine-900: rgba(252, 135, 164, 0.36);   /* darkest */
+      --wine-800: #a43561;   /* deep burgundy */
+      --rose-500: #c56e8c;   /* muted rose */
+      --pink-300: #f0c0da;   /* light pink */
+      --pink-200: #f7d7ea;   /* blush */
+
+      --bg: var(--pink-200);
+      --ink: #2b0a16;        /* ink on light backgrounds */
+      --card: #fff7fb;       /* soft card */
+      --soft: #f1b4cf;       /* borders */
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 80% -20%, var(--pink-200) 0%, var(--pink-300) 50%, var(--rose-500) 100%),
+        linear-gradient(180deg, var(--wine-900) 0%, var(--wine-800) 32%, var(--rose-500) 64%, var(--pink-300) 82%, var(--pink-200) 100%);
+      background-blend-mode: multiply, normal;
+    }
+
+    .app {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+      align-items: center;
+      padding: clamp(16px, 5vw, 40px);
+    }
+    @media (max-width: 880px) {
+      .app { grid-template-columns: 1fr; }
+      .right { order: 2; }
+    }
+
+    /* LEFT */
+    .left { position: relative; display: grid; gap: 18px; align-content: center; }
+    .center-callout { text-align: center; display: grid; gap: 14px; place-items: center; }
+    .center-callout h1 { margin: 0; font-size: clamp(28px, 5vw, 46px); letter-spacing: .3px; line-height: 1.1; color: #ffe9f3; text-shadow: 0 2px 0 rgba(0,0,0,.05); }
+
+    .controls { display: grid; place-items: center; }
+    button.primary {
+      appearance: none; border: none; cursor: pointer; font-weight: 800;
+      padding: 14px 22px; border-radius: 999px; font-size: clamp(16px, 2vw, 18px);
+      color: #ffeaf3; background: linear-gradient(180deg, var(--wine-800), var(--wine-900));
+      box-shadow: 0 18px 32px rgba(79,0,19,.35), inset 0 -10px 16px rgba(0,0,0,.12);
+      transition: transform .08s ease, filter .2s ease, box-shadow .2s ease;
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    button.primary:hover { filter: brightness(1.05); box-shadow: 0 22px 42px rgba(79,0,19,.45), inset 0 -10px 16px rgba(0,0,0,.12); }
+    button.primary:active { transform: translateY(1px) scale(.995); }
+    button.primary:disabled { opacity: .7; cursor: not-allowed; }
+
+    .message-box {
+      min-height: 150px; background: var(--card);
+      border: 1px solid var(--soft); border-radius: 18px; padding: 18px 20px;
+      display: grid; align-content: center; position: relative; overflow: hidden;
+      box-shadow: 0 20px 40px rgba(111,15,54,.15);
+    }
+    .message-text { opacity: 0; transform: translateY(8px); transition: 320ms ease; font-size: clamp(18px, 2.2vw, 22px); }
+    .message-text.show { opacity: 1; transform: translateY(0); }
+
+    .countdown {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      background: radial-gradient(600px 160px at 50% 20%, rgba(197,110,140,.20), rgba(255,255,255,.75) 70%);
+      font-weight: 900; font-size: clamp(28px, 6vw, 56px); color: var(--wine-800); letter-spacing: .5px;
+      animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+    /* HEARTS */
+    .heart {
+      position: fixed; width: 18px; height: 18px; left: var(--x, 0); top: var(--y, 0);
+      transform: translate(-50%, -50%) rotate(45deg);
+      background: var(--c, var(--pink-300));
+      animation: float 900ms cubic-bezier(.22,.78,.16,1) forwards;
+      filter: drop-shadow(0 4px 6px rgba(111,15,54,.35)); z-index: 30;
+    }
+    .heart::before, .heart::after { content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: inherit; }
+    .heart::before { left: -9px; top: 0; }
+    .heart::after { left: 0; top: -9px; }
+    @keyframes float {
+      0% { transform: translate(var(--sx,0), var(--sy,0)) rotate(45deg) scale(.9); opacity: 1; }
+      60% { transform: translate(calc(var(--sx,0) + var(--tx, 0px)), calc(var(--sy,0) + var(--ty, -100px))) rotate(calc(45deg + var(--rot, 0deg))) scale(1.12); }
+      100% { transform: translate(calc(var(--sx,0) + var(--tx, 0px)), calc(var(--sy,0) + var(--ty, -150px))) rotate(calc(45deg + var(--rot, 0deg))) scale(.9); opacity: 0; }
+    }
+
+    /* RIGHT PHOTO */
+    .right { position: relative; display: grid; place-items: center; min-height: 280px; }
+    .photo-frame { position: relative; width: min(92%, 380px); aspect-ratio: 4/5; border-radius: 20px; overflow: hidden; border: 2px solid var(--soft); background: #fff; box-shadow: 0 24px 48px rgba(111,15,54,.18); transform: translateX(40px); opacity: 0; }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .arrive { animation: arrive 900ms ease-out forwards; }
+    @keyframes arrive {
+      0% { transform: translateX(80px) scale(.98); opacity: 0; filter: brightness(.98); }
+      60% { transform: translateX(-8px) scale(1.02); opacity: 1; filter: brightness(1.02); }
+      100% { transform: translateX(0) scale(1); opacity: 1; filter: brightness(1); }
+    }
+
+    footer { margin: 10px auto 0; font-size: 12px; opacity: .7; text-align: center; color: #5a0e2c; }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="left">
+      <div class="center-callout">
+        <h1>Where my brain travels too when ALWAYS:</h1>
+        <div class="controls">
+          <button id="btn" class="primary">CLICK ME</button>
+        </div>
+      </div>
+
+      <div class="message-box">
+        <div id="message" class="message-text">on the way!💌</div>
+        <div id="countdown" class="countdown" style="display:none">5</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="photo-frame" id="photoFrame">
+        <img id="photo" src="futurehusband.jpg" alt="photo" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MESSAGES = [
+      "Best boyfriend and.... future.... ",
+      "You make me so happy...",
+      "Have a good day ☀️",
+      "Hehehe, no photos, just me🤭",
+      "This is not sustainable...",
+      "I have the best boyfriend 💕",
+      "I need your kisses ASAP 😚",
+      "I want to sit on your face 😏",
+      "Kiss me 💋",
+      "We always laugh honey!",
+      "Memories 📸",
+      "Miss you there 🥹",
+      "My best ❤️",
+      "Oh baby",
+      "Fuck me. Please?",
+      "How many seven elevens we can do in the world?!",
+      "Love, lets watch a movie?🍿",
+      "BABE, you always take THE BEST pictures hehehhe🤪",
+      "What happened?????????",
+      "Best day of my life",
+      "Yeah.. *Brown*..",
+      "This is your sign to text me, love",
+    ];
+
+    const PHOTOS = [
+      "futurehusband.jpg",
+      "happy.jpg",
+      "haveagoodday.jpg",
+      "hehehehe.jpg",
+      "hot.jpg",
+      "Ihavethebestboyfriend.jpg",
+      "ineedyourkissesasap.jpg",
+      "iwanttositonyourface.jpg",
+      "kissme.jpg",
+      "laughing.jpg",
+      "memories.jpg",
+      "missyouthere.jpg",
+      "mybestsyd.jpg",
+      "ohbaby.jpg",
+      "sex.jpg",
+      "singapore.jpg",
+      "watching-movie.jpg",
+      "weirdphotos.jpg",
+      "what.jpg",
+      "bestdayofmylife.jpg",
+      "brown.jpg",
+      "annoyed",
+    ];
+
+    const btn = document.getElementById('btn');
+    const msgEl = document.getElementById('message');
+    const app = document.getElementById('app');
+    const cd = document.getElementById('countdown');
+    const photoFrame = document.getElementById('photoFrame');
+    const photo = document.getElementById('photo');
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function spawnHeart(x, y) {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.style.setProperty('--x', x + 'px');
+      h.style.setProperty('--y', y + 'px');
+      h.style.setProperty('--sx', '-50%');
+      h.style.setProperty('--sy', '-50%');
+      h.style.setProperty('--tx', rand(-40, 60) + 'px');
+      h.style.setProperty('--ty', rand(-110, -160) + 'px');
+      h.style.setProperty('--rot', rand(-30, 30) + 'deg');
+      // hearts in the wine→rose palette
+      h.style.setProperty('--c', `hsl(${rand(330, 350)}, 70%, ${rand(45, 60)}%)`);
+      h.style.animationDuration = rand(750, 1100) + 'ms';
+      document.body.appendChild(h);
+      h.addEventListener('animationend', () => h.remove());
+    }
+
+    function showCountdown(ms, onDone) {
+      let remain = Math.round(ms / 1000);
+      cd.style.display = 'grid';
+      cd.textContent = remain;
+      const tick = setInterval(() => {
+        remain -= 1;
+        if (remain <= 0) {
+          clearInterval(tick);
+          cd.style.display = 'none';
+          onDone?.();
+        } else {
+          cd.textContent = remain;
+        }
+      }, 1000);
+    }
+
+    function revealMessage(index) {
+      msgEl.textContent = MESSAGES[index];
+      msgEl.classList.remove('show');
+      void msgEl.offsetWidth;
+      msgEl.classList.add('show');
+      photo.src = PHOTOS[index];
+    }
+
+    function arrivePhoto() {
+      photoFrame.classList.remove('arrive');
+      void photoFrame.offsetWidth;
+      photoFrame.classList.add('arrive');
+    }
+
+    btn.addEventListener('click', (e) => {
+      btn.disabled = true;
+      msgEl.classList.remove('show');
+      const rect = app.getBoundingClientRect();
+      const x = (e.clientX ?? (rect.left + rect.width * .5));
+      const y = (e.clientY ?? (rect.top + rect.height * .5));
+      const index = Math.floor(Math.random() * MESSAGES.length);
+
+      showCountdown(5000, () => {
+        revealMessage(index);
+        arrivePhoto();
+        for (let i = 0; i < 8; i++) setTimeout(() => spawnHeart(x + rand(-10, 10), y + rand(-10, 10)), i * 40);
+        btn.disabled = false;
+      });
+    });
+
+    msgEl.classList.add('show');
+  </script>
+
+  <footer>
+    This website was created for SYD CHAMBERS 🎉 Because he is MIY LUIBIMIY
+  </footer>
+</body>
+</html>
