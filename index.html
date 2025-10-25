@@ -1,26 +1,24 @@
-<!-- =========================
-FILE: index.html (UPDATED)
-- Added a second button that links to flashcards.html
-========================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hey, Baby!</title>
+  <title>Hey, baby!</title>
   <style>
     :root {
       /* Wine → Rose palette */
-      --wine-900: rgba(252, 135, 164, 0.36);   /* darkest */
-      --wine-800: #a43561;   /* deep burgundy */
-      --rose-500: #c56e8c;   /* muted rose */
-      --pink-300: #f0c0da;   /* light pink */
-      --pink-200: #f7d7ea;   /* blush */
+      --wine-900: #f0c0da;
+      --wine-800: #f7d7ea;
+      --rose-500: #770737;
+      --pink-300: #f0c0da;
+      --pink-200: #f7d7ea;
 
       --bg: var(--pink-200);
-      --ink: #2b0a16;        /* ink on light backgrounds */
-      --card: #fff7fb;       /* soft card */
-      --soft: #f1b4cf;       /* borders */
+      --ink: #2b0a16;
+      --card: #fff7fb;
+      --soft: #f1b4cf;
+      --good: #16a34a;
+      --good-2: #22c55e;
     }
 
     * { box-sizing: border-box; }
@@ -35,103 +33,95 @@ FILE: index.html (UPDATED)
       background-blend-mode: multiply, normal;
     }
 
-    .app {
-      min-height: 100svh;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 28px;
-      align-items: center;
-      padding: clamp(16px, 5vw, 40px);
-    }
-    @media (max-width: 880px) {
-      .app { grid-template-columns: 1fr; }
-      .right { order: 2; }
-    }
+    .app { min-height: 100svh; display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; padding: clamp(16px, 5vw, 40px); }
+    @media (max-width: 880px) { .app { grid-template-columns: 1fr; } .right { order: 2; } }
 
     /* LEFT */
     .left { position: relative; display: grid; gap: 18px; align-content: center; }
     .center-callout { text-align: center; display: grid; gap: 14px; place-items: center; }
     .center-callout h1 { margin: 0; font-size: clamp(28px, 5vw, 46px); letter-spacing: .3px; line-height: 1.1; color: #ffe9f3; text-shadow: 0 2px 0 rgba(0,0,0,.05); }
 
-    .controls { display: grid; place-items: center; gap: 10px; }
-    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    button.primary, a.primary {
-      appearance: none; border: none; cursor: pointer; font-weight: 800;
-      padding: 14px 22px; border-radius: 999px; font-size: clamp(16px, 2vw, 18px);
-      color: #ffeaf3; background: linear-gradient(180deg, var(--wine-800), var(--wine-900));
-      box-shadow: 0 18px 32px rgba(79,0,19,.35), inset 0 -10px 16px rgba(0,0,0,.12);
-      transition: transform .08s ease, filter .2s ease, box-shadow .2s ease;
-      border: 1px solid rgba(255,255,255,.18);
-      text-decoration: none; display: inline-block;
-    }
-    button.primary:hover, a.primary:hover { filter: brightness(1.05); box-shadow: 0 22px 42px rgba(79,0,19,.45), inset 0 -10px 16px rgba(0,0,0,.12); }
+    .controls { display: grid; place-items: center; }
+    button.primary { appearance: none; border: none; cursor: pointer; font-weight: 800; padding: 14px 22px; border-radius: 999px; font-size: clamp(16px, 2vw, 18px); color: #ffeaf3; background: linear-gradient(180deg, var(--wine-800), var(--wine-900)); box-shadow: 0 18px 32px rgba(79,0,19,.35), inset 0 -10px 16px rgba(0,0,0,.12); transition: transform .08s ease, filter .2s ease, box-shadow .2s ease; border: 1px solid rgba(255,255,255,.18); }
+    button.primary:hover { filter: brightness(1.05); box-shadow: 0 22px 42px rgba(79,0,19,.45), inset 0 -10px 16px rgba(0,0,0,.12); }
     button.primary:active { transform: translateY(1px) scale(.995); }
     button.primary:disabled { opacity: .7; cursor: not-allowed; }
 
-    .message-box {
-      min-height: 150px; background: var(--card);
-      border: 1px solid var(--soft); border-radius: 18px; padding: 18px 20px;
-      display: grid; align-content: center; position: relative; overflow: hidden;
-      box-shadow: 0 20px 40px rgba(111,15,54,.15);
-    }
+    .message-box { min-height: 150px; background: var(--card); border: 1px solid var(--soft); border-radius: 18px; padding: 18px 20px; display: grid; align-content: center; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(111,15,54,.15); }
     .message-text { opacity: 0; transform: translateY(8px); transition: 320ms ease; font-size: clamp(18px, 2.2vw, 22px); }
     .message-text.show { opacity: 1; transform: translateY(0); }
 
-    .countdown {
-      position: absolute; inset: 0; display: grid; place-items: center;
-      background: radial-gradient(600px 160px at 50% 20%, rgba(197,110,140,.20), rgba(255,255,255,.75) 70%);
-      font-weight: 900; font-size: clamp(28px, 6vw, 56px); color: var(--wine-800); letter-spacing: .5px;
-      animation: fadeIn .2s ease;
-    }
+    .countdown { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(600px 160px at 50% 20%, rgba(197,110,140,.20), rgba(255,255,255,.75) 70%); font-weight: 900; font-size: clamp(28px, 6vw, 56px); color: var(--wine-800); letter-spacing: .5px; animation: fadeIn .2s ease; }
     @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 
     /* HEARTS */
-    .heart {
-      position: fixed; width: 18px; height: 18px; left: var(--x, 0); top: var(--y, 0);
-      transform: translate(-50%, -50%) rotate(45deg);
-      background: var(--c, var(--pink-300));
-      animation: float 900ms cubic-bezier(.22,.78,.16,1) forwards;
-      filter: drop-shadow(0 4px 6px rgba(111,15,54,.35)); z-index: 30;
-    }
+    .heart { position: fixed; width: 18px; height: 18px; left: var(--x, 0); top: var(--y, 0); transform: translate(-50%, -50%) rotate(45deg); background: var(--c, var(--pink-300)); animation: float 900ms cubic-bezier(.22,.78,.16,1) forwards; filter: drop-shadow(0 4px 6px rgba(111,15,54,.35)); z-index: 30; }
     .heart::before, .heart::after { content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: inherit; }
     .heart::before { left: -9px; top: 0; }
     .heart::after { left: 0; top: -9px; }
-    @keyframes float {
-      0% { transform: translate(var(--sx,0), var(--sy,0)) rotate(45deg) scale(.9); opacity: 1; }
-      60% { transform: translate(calc(var(--sx,0) + var(--tx, 0px)), calc(var(--sy,0) + var(--ty, -100px))) rotate(calc(45deg + var(--rot, 0deg))) scale(1.12); }
-      100% { transform: translate(calc(var(--sx,0) + var(--tx, 0px)), calc(var(--sy,0) + var(--ty, -150px))) rotate(calc(45deg + var(--rot, 0deg))) scale(.9); opacity: 0; }
-    }
+    @keyframes float { 0% { transform: translate(var(--sx,0), var(--sy,0)) rotate(45deg) scale(.9); opacity: 1; } 60% { transform: translate(calc(var(--sx,0) + var(--tx, 0px)), calc(var(--sy,0) + var(--ty, -100px))) rotate(calc(45deg + var(--rot, 0deg))) scale(1.12); } 100% { transform: translate(calc(var(--sx,0) + var(--tx, 0px)), calc(var(--sy,0) + var(--ty, -150px))) rotate(calc(45deg + var(--rot, 0deg))) scale(.9); opacity: 0; } }
 
     /* RIGHT PHOTO */
     .right { position: relative; display: grid; place-items: center; min-height: 280px; }
     .photo-frame { position: relative; width: min(92%, 380px); aspect-ratio: 4/5; border-radius: 20px; overflow: hidden; border: 2px solid var(--soft); background: #fff; box-shadow: 0 24px 48px rgba(111,15,54,.18); transform: translateX(40px); opacity: 0; }
     .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .arrive { animation: arrive 900ms ease-out forwards; }
-    @keyframes arrive {
-      0% { transform: translateX(80px) scale(.98); opacity: 0; filter: brightness(.98); }
-      60% { transform: translateX(-8px) scale(1.02); opacity: 1; filter: brightness(1.02); }
-      100% { transform: translateX(0) scale(1); opacity: 1; filter: brightness(1); }
-    }
+    @keyframes arrive { 0% { transform: translateX(80px) scale(.98); opacity: 0; filter: brightness(.98); } 60% { transform: translateX(-8px) scale(1.02); opacity: 1; filter: brightness(1.02); } 100% { transform: translateX(0) scale(1); opacity: 1; filter: brightness(1); } }
 
     footer { margin: 10px auto 0; font-size: 12px; opacity: .7; text-align: center; color: #5a0e2c; }
+
+    /* Brand badge */
+    .brand { position: fixed; top: 14px; left: 14px; z-index: 50; }
+    .brand span { display: inline-block; padding: 8px 12px; border-radius: 999px; font-weight: 800; letter-spacing: .3px; font-size: 14px; color: #ffeaf3; background: linear-gradient(180deg, var(--wine-800), var(--wine-900)); box-shadow: 0 10px 20px rgba(79,0,19,.28), inset 0 -6px 12px rgba(0,0,0,.12); border: 1px solid rgba(255,255,255,.18); }
+
+    /* Mode toggle buttons */
+    .mode-hidden { display:none !important; }
+    .top-actions{ position:fixed; right:14px; top:14px; z-index:60; display:flex; gap:10px; }
+    .pill{ appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:999px; font-weight:800; letter-spacing:.3px; font-size:14px; color:#ffeaf3; background:linear-gradient(180deg,var(--wine-800),var(--wine-900)); box-shadow:0 10px 20px rgba(79,0,19,.28), inset 0 -6px 12px rgba(0,0,0,.12); border:1px solid rgba(255,255,255,.18) }
+
+    /* Flashcards UI */
+    .card { background: var(--card); border:1px solid var(--soft); border-radius:18px; padding:24px; box-shadow:0 20px 40px rgba(111,15,54,.15); }
+    .fc-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .fc-progress { font-weight:800; color:#5a0e2c; opacity:.9; }
+    .fc-big { font-size: clamp(36px, 8vw, 64px); font-weight: 900; letter-spacing: 1px; }
+    .fc-sub { font-size: clamp(16px, 2.2vw, 20px); opacity:.9; margin-top: 8px; }
+    .fc-actions { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+    .btn { appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:800; }
+    .btn.secondary { background:#ffeaf3; color:#4f0f27; border:1px solid var(--soft); }
+    .btn.tick { background:#fff; color: var(--good); border:2px solid var(--good-2); box-shadow:0 6px 12px rgba(22,163,74,.15), inset 0 -4px 8px rgba(0,0,0,.06); display:flex; align-items:center; gap:8px; }
+    .btn.tick.ticked { background: linear-gradient(180deg, var(--good-2), var(--good)); color:#fff; box-shadow:0 10px 20px rgba(22,163,74,.25), inset 0 -6px 10px rgba(0,0,0,.12); }
+    .btn.tick:active { transform: translateY(1px); }
+
+    .deck-switch { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .chip { padding:8px 12px; border-radius:999px; border:1px solid var(--soft); background:#fff; font-weight:800; cursor:pointer; }
+    .chip.active { background:#ffeaf3; border-color:#f3c3da; }
+
+    /* Reward overlay */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .overlay.show { display: flex; }
+    .reward { background: #fff; border-radius: 20px; padding: 16px; border: 2px solid var(--soft); box-shadow: 0 30px 60px rgba(0,0,0,.3); }
+    .reward img { max-width: min(80vw, 520px); max-height: min(70vh, 520px); display: block; border-radius: 16px; }
+    .reward .fallback { font-size: clamp(28px,5vw,48px); font-weight: 900; color: #155e2b; text-align:center; padding: 28px; }
   </style>
 </head>
 <body>
+
+  <div class="top-actions">
+    <button id="goLearn" class="pill" title="Switch to Russian learning">Study Russian</button>
+    <button id="goPhotos" class="pill mode-hidden" title="Back to Click‑Me & Photos">← Back to Click‑Me & Photos</button>
+  </div>
+
+  <!-- PHOTOS / CLICK-ME MODE -->
   <div class="app" id="app">
     <div class="left">
       <div class="center-callout">
-        <h1>Where my brain travels to when ALWAYS:</h1>
         <div class="controls">
-          <div class="btn-row">
-            <button id="btn" class="primary">CLICK ME</button>
-            <!-- NEW: Link button to the flashcards page -->
-            <a class="primary" href="flashcards.html" aria-label="Go to Russian flashcards">Learn Russian 🇷🇺</a>
-          </div>
+          <button id="btn" class="primary">What do I think about:</button>
         </div>
       </div>
 
       <div class="message-box">
-        <div id="message" class="message-text">on the way!💌</div>
+        <div id="message" class="message-text">Click for a surprise 💌</div>
         <div id="countdown" class="countdown" style="display:none">5</div>
       </div>
     </div>
@@ -143,7 +133,50 @@ FILE: index.html (UPDATED)
     </div>
   </div>
 
+  <!-- RUSSIAN LEARNING MODE -->
+  <div id="learn" class="app mode-hidden" aria-hidden="true" style="grid-template-columns:1fr;">
+    <div class="left">
+      <div class="center-callout">
+        <h1>Flashcards for the Mr Worldwide</h1>
+        <p style="color:#ffe9f3;opacity:.9;margin:6px 0 12px">Hey love, you can choose between two decks. Tick when you know letter/word, 5 wins unlock a surprise ;)</p>
+      </div>
+
+      <div class="card">
+        <div class="fc-header">
+          <div class="fc-progress">
+            Deck:
+            <span id="deckName">Alphabet</span>
+            • <span id="fcIndex">1</span>/<span id="fcTotal">0</span>
+            • Wins: <span id="winCount">0</span>
+          </div>
+        </div>
+
+        <div class="deck-switch">
+          <button id="deckAlphabet" class="chip active">Alphabet</button>
+          <button id="deckWords" class="chip">Words</button>
+        </div>
+
+        <div class="fc-big" id="fcFront">А а</div>
+        <div class="fc-sub" id="fcBack">a — арбуз (watermelon)</div>
+        <div class="fc-actions">
+          <button id="prevCard" class="btn secondary">← Prev</button>
+          <button id="nextCard" class="btn secondary">Next →</button>
+          <button id="tick" class="btn tick" title="I knew it!">✅ I knew this</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reward overlay -->
+  <div class="overlay" id="overlay">
+    <div class="reward">
+      <img id="rewardImg" src="swimsuit.jpg" alt="You caught me!" onerror="this.style.display='none'; document.getElementById('rewardText').style.display='block'" />
+      <div id="rewardText" class="fallback" style="display:none">You caught me, love! </div>
+    </div>
+  </div>
+
   <script>
+    // === Messages & Photos (photos mode) ===
     const MESSAGES = [
       "Best boyfriend and.... future.... ",
       "You make me so happy...",
@@ -160,14 +193,10 @@ FILE: index.html (UPDATED)
       "My best ❤️",
       "Oh baby",
       "Fuck me. Please?",
-      "How many seven elevens we can do in the world?!",
+      "Thinking about how many seven elevens we can do in the world?!",
       "Love, lets watch a movie?🍿",
       "BABE, you always take THE BEST pictures hehehhe🤪",
-      "What happened?????????",
-      "Best day of my life",
-      "Yeah.. *Brown*..",
-      "This is your sign to text me, love",
-      "Hey sexy, fancy to kiss me with a tongue?"
+      "What happened?????????"
     ];
 
     const PHOTOS = [
@@ -189,11 +218,7 @@ FILE: index.html (UPDATED)
       "singapore.jpg",
       "watching-movie.jpg",
       "weirdphotos.jpg",
-      "what.jpg",
-      "bestdayofmylife.jpg",
-      "brown.jpg",
-      "annoyed.jpg",
-      "ahbaby.jpg",
+      "what.jpg"
     ];
 
     const btn = document.getElementById('btn');
@@ -215,7 +240,6 @@ FILE: index.html (UPDATED)
       h.style.setProperty('--tx', rand(-40, 60) + 'px');
       h.style.setProperty('--ty', rand(-110, -160) + 'px');
       h.style.setProperty('--rot', rand(-30, 30) + 'deg');
-      // hearts in the wine→rose palette
       h.style.setProperty('--c', `hsl(${rand(330, 350)}, 70%, ${rand(45, 60)}%)`);
       h.style.animationDuration = rand(750, 1100) + 'ms';
       document.body.appendChild(h);
@@ -232,9 +256,7 @@ FILE: index.html (UPDATED)
           clearInterval(tick);
           cd.style.display = 'none';
           onDone?.();
-        } else {
-          cd.textContent = remain;
-        }
+        } else { cd.textContent = remain; }
       }, 1000);
     }
 
@@ -245,12 +267,7 @@ FILE: index.html (UPDATED)
       msgEl.classList.add('show');
       photo.src = PHOTOS[index];
     }
-
-    function arrivePhoto() {
-      photoFrame.classList.remove('arrive');
-      void photoFrame.offsetWidth;
-      photoFrame.classList.add('arrive');
-    }
+    function arrivePhoto() { photoFrame.classList.remove('arrive'); void photoFrame.offsetWidth; photoFrame.classList.add('arrive'); }
 
     btn.addEventListener('click', (e) => {
       btn.disabled = true;
@@ -259,7 +276,6 @@ FILE: index.html (UPDATED)
       const x = (e.clientX ?? (rect.left + rect.width * .5));
       const y = (e.clientY ?? (rect.top + rect.height * .5));
       const index = Math.floor(Math.random() * MESSAGES.length);
-
       showCountdown(5000, () => {
         revealMessage(index);
         arrivePhoto();
@@ -267,12 +283,139 @@ FILE: index.html (UPDATED)
         btn.disabled = false;
       });
     });
-
     msgEl.classList.add('show');
+
+    // === Mode switcher (#photos / #learn) ===
+    const appWrap = document.getElementById('app');
+    const learnWrap = document.getElementById('learn');
+    const goLearn = document.getElementById('goLearn');
+    const goPhotos = document.getElementById('goPhotos');
+
+    function setMode(mode){
+      const photosMode = mode !== 'learn';
+      appWrap.classList.toggle('mode-hidden', !photosMode);
+      learnWrap.classList.toggle('mode-hidden', photosMode);
+      goPhotos.classList.toggle('mode-hidden', photosMode);
+      goLearn.classList.toggle('mode-hidden', !photosMode);
+      if(photosMode){ history.replaceState(null,'', '#photos'); } else { history.replaceState(null,'', '#learn'); }
+    }
+    function currentModeFromHash(){ return (location.hash || '#photos').replace('#',''); }
+    window.addEventListener('hashchange', ()=> setMode(currentModeFromHash()));
+    goLearn?.addEventListener('click', ()=> setMode('learn'));
+    goPhotos?.addEventListener('click', ()=> setMode('photos'));
+    setMode(currentModeFromHash());
+
+    // === Flashcards decks ===
+    const ALPHABET = [
+      {front:'А а', back:'a', word:'as in A lphabet'},
+      {front:'Б б', back:'b', word:'as in B arack Obama'},
+      {front:'В в', back:'w', word:'as in W aterfall'},
+      {front:'Г г', back:'g', word:'as in G arter'},
+      {front:'Д д', back:'d', word:'as in D achshund'},
+      {front:'Е е', back:'ye / e', word:'As in YE llow'},
+      {front:'Ё ё', back:'yo', word:'As in YO ghurt'},
+      {front:'Ж ж', back:'zh', word:'love I think there no example in english, but I will teach you'},
+      {front:'З з', back:'z', word:'As in Z emphira'},
+      {front:'И и', back:'e', word:'As in E nglishman'},
+      {front:'Й й', back:'y (short)', word:'no comparable.. kinda sounds like yoga, can we do yoga naked btw?'},
+      {front:'К к', back:'k', word:'As in C ourtney Love'},
+      {front:'Л л', back:'l', word:'As in L ombok lol, or L ove'},
+      {front:'М м', back:'m', word:'as in M ama M ia'},
+      {front:'Н н', back:'n', word:'as in N aughty'},
+      {front:'О о', back:'o', word:'as in O bsession'},
+      {front:'П п', back:'p', word:'as in P uta'},
+      {front:'Р р', back:'r (animal sounds)', word:'as in R AAWR'},
+      {front:'С с', back:'s', word:'as in S ingapore'},
+      {front:'Т т', back:'t', word:'as in T ower (of London)'},
+      {front:'У у', back:'u', word:'as in v OO d OO'},
+      {front:'Ф ф', back:'f', word:'as in F antasy, ur my fantasy babe'},
+      {front:'Х х', back:'kh (loch)', word:'as in H ot'},
+      {front:'Ц ц', back:'ts', word:'as in TS ar'},
+      {front:'Ч ч', back:'ch', word:'as in CH ulo'},
+      {front:'Ш ш', back:'sh', word:'as in SH akSHuka'},
+      {front:'Щ щ', back:'shch', word:'soft Shakshuka idk...'},
+      {front:'Ъ ъ', back:'hard sign', word:'hard like your dick when we fuck'},
+      {front:'Ы ы', back:'y (hard)', word:'love.. i will teach you'},
+      {front:'Ь ь', back:'soft sign', word:'hahhahahh again no sound'},
+      {front:'Э э', back:'e', word:'you speak goat right, its like m EEEh'},
+      {front:'Ю ю', back:'yu', word:'as in Y ou'},
+      {front:'Я я', back:'ya', word:'as in see YA in two(hahah) days'},
+    ];
+
+    const WORDS = [
+      {front:'привет', back:'privet', word:'hi'},
+      {front:'спасибо', back:'spasibo', word:'thank you'},
+      {front:'пожалуйста', back:'pozhaluysta', word:'please'},
+      {front:'любовь', back:'lyubov\'', word:'love'},
+      {front:'поцелуй', back:'potseluy (mene)', word:'kiss'},
+      {front:'муж', back:'muzh', word:'husband'},
+      {front:'вода', back:'voda', word:'water'},
+      {front:'говядина', back:'govyadina', word:'beef'},
+      {front:'огурец', back:'ogyrets', word:'cucumber'},
+      {front:'фильм', back:'film', word:'movie'},
+    ];
+
+    let deck = 'alphabet';
+    let CARDS = ALPHABET;
+    let idx = 0;
+    const wins = { alphabet: 0, words: 0 };
+
+    const fcFront = document.getElementById('fcFront');
+    const fcBack = document.getElementById('fcBack');
+    const fcIndex = document.getElementById('fcIndex');
+    const fcTotal = document.getElementById('fcTotal');
+    const winCountEl = document.getElementById('winCount');
+    const prevCard = document.getElementById('prevCard');
+    const nextCard = document.getElementById('nextCard');
+    const tickBtn = document.getElementById('tick');
+    const deckAlphabet = document.getElementById('deckAlphabet');
+    const deckWords = document.getElementById('deckWords');
+    const deckName = document.getElementById('deckName');
+    const overlay = document.getElementById('overlay');
+
+    function renderCard(){
+      const c = CARDS[idx];
+      fcFront.textContent = c.front;
+      fcBack.textContent = `${c.back} — ${c.word}`;
+      fcIndex.textContent = (idx+1);
+      fcTotal.textContent = CARDS.length;
+      winCountEl.textContent = wins[deck];
+      deckName.textContent = deck === 'alphabet' ? 'Alphabet' : 'Words';
+      tickBtn.classList.remove('ticked');
+    }
+
+    function setDeck(name){
+      deck = name;
+      CARDS = deck === 'alphabet' ? ALPHABET : WORDS;
+      idx = 0;
+      deckAlphabet.classList.toggle('active', deck==='alphabet');
+      deckWords.classList.toggle('active', deck==='words');
+      renderCard();
+    }
+
+    prevCard.addEventListener('click', ()=>{ idx = (idx - 1 + CARDS.length) % CARDS.length; renderCard(); });
+    nextCard.addEventListener('click', ()=>{ idx = (idx + 1) % CARDS.length; renderCard(); });
+
+    tickBtn.addEventListener('click', ()=>{ tickBtn.classList.add('ticked');
+      wins[deck] += 1;
+      winCountEl.textContent = wins[deck];
+      const rect = learnWrap.getBoundingClientRect();
+      for (let i=0;i<6;i++) setTimeout(()=>spawnHeart(rect.left+rect.width/2+rand(-40,40), rect.top+rect.height/2+rand(-20,20)), i*40);
+      if (wins[deck] % 5 === 0) {
+        overlay.classList.add('show');
+        setTimeout(()=> overlay.classList.remove('show'), 4000);
+      }
+    });
+
+    deckAlphabet.addEventListener('click', ()=> setDeck('alphabet'));
+    deckWords.addEventListener('click', ()=> setDeck('words'));
+
+    // init
+    setDeck('alphabet');
   </script>
 
   <footer>
-    This website was created for SYD CHAMBERS 🎉 Because he is MIY LUIBIMIY
+    Half a year love hahahha, MY MOM AWAITS!
   </footer>
 </body>
 </html>
