@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Russian Flashcards — Toggle + Transliteration</title>
+  <style>
+    :root { --card:#fff7fb; --soft:#f1b4cf; --ink:#2b0a16; --accent:#a43561; --bg1:#f7d7ea; --bg2:#f0c0da; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; color: var(--ink);
+      background: radial-gradient(1200px 700px at 80% -20%, var(--bg1), var(--bg2));
+      display: grid; grid-template-rows: auto 1fr auto; min-height: 100svh;
+    }
+    header, footer { padding: 12px 16px; display:flex; align-items:center; gap:10px; }
+    header { justify-content: space-between; }
+    .title { font-weight: 900; letter-spacing:.3px; }
+    .btn { border:1px solid rgba(0,0,0,.06); background:linear-gradient(180deg,#a43561,#f287ab66); color:#ffeaf3;
+           padding:10px 14px; border-radius:999px; font-weight:800; cursor:pointer; }
+
+    .stage { display:grid; place-items:center; padding: 16px; }
+    .card { width:min(92vw, 560px); aspect-ratio:16/10; perspective:1000px; border:none; background:none; cursor:pointer; }
+    .card-inner { position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .5s ease; }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .face {
+      position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+      border-radius:20px; background:var(--card); border:2px solid var(--soft); box-shadow:0 18px 36px rgba(0,0,0,.12);
+      backface-visibility:hidden; padding:24px;
+    }
+    .ru { font-size: clamp(28px, 6vw, 48px); font-weight: 900; }
+    .en { transform: rotateY(180deg); }
+    .en .word { font-size: clamp(22px, 4.8vw, 36px); font-weight: 900; color: var(--accent); }
+    .en .lat  { margin-top: 6px; font-size: clamp(14px, 3.5vw, 20px); opacity:.85; }
+    .en .hint { margin-top: 10px; font-size: 14px; opacity:.6; }
+    .meta { opacity:.7; font-size: 14px }
+    .spacer { flex:1 }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">Russian Flashcards — Click to switch sides</div>
+    <div>
+      <button class="btn" id="shuffle">Shuffle</button>
+      <button class="btn" id="next">Next</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <button class="card" id="card" aria-label="Flashcard">
+      <div class="card-inner">
+        <div class="face ru" id="ru">Привет</div>
+        <div class="face en" id="en">
+          <div class="word">Hello</div>
+          <div class="lat">privét</div>
+          <div class="hint">(click to show Russian)</div>
+        </div>
+      </div>
+    </button>
+  </main>
+
+  <footer>
+    <div class="meta" id="progress">1 / 7</div>
+    <div class="spacer"></div>
+    <div class="meta">Tip: Click card to toggle Russian/English</div>
+  </footer>
+
+  <script>
+    // Deck with transliteration (lat)
+    const DECK = [
+      { ru:"Привет",      en:"Hello",           lat:"privét" },
+      { ru:"Пока",        en:"Bye",             lat:"paká"   },
+      { ru:"Спасибо",     en:"Thank you",       lat:"spasíbo"},
+      { ru:"Пожалуйста",  en:"Please / You're welcome", lat:"pozhalúysta" },
+      { ru:"Любовь",      en:"Love",            lat:"lyubóv’" },
+      { ru:"Дом",         en:"Home / House",    lat:"dom"    },
+      { ru:"Книга",       en:"Book",            lat:"kníga"  },
+    ];
+
+    const card = document.getElementById('card');
+    const ruEl  = document.getElementById('ru');
+    const enEl  = document.getElementById('en');
+    const progress = document.getElementById('progress');
+    const shuffleBtn = document.getElementById('shuffle');
+    const nextBtn    = document.getElementById('next');
+
+    let i = 0;
+
+    function shuffle(arr){
+      for (let k = arr.length - 1; k > 0; k--) {
+        const j = Math.floor(Math.random() * (k + 1));
+        [arr[k], arr[j]] = [arr[j], arr[k]];
+      }
+      return arr;
+    }
+
+    function render(idx){
+      const item = DECK[idx % DECK.length];
+      ruEl.textContent = item.ru;
+      enEl.innerHTML = `
+        <div class="word">${item.en}</div>
+        <div class="lat">${item.lat}</div>
+        <div class="hint">(click to show Russian)</div>
+      `;
+      progress.textContent = `${(idx % DECK.length) + 1} / ${DECK.length}`;
+      card.classList.remove('flipped'); // show Russian first
+    }
+
+    // Click card: toggle RU ↔ EN
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+
+    // Controls
+    shuffleBtn.addEventListener('click', () => { shuffle(DECK); i = 0; render(i); });
+    nextBtn.addEventListener('click', () => { i = (i + 1) % DECK.length; render(i); });
+
+    // Init
+    shuffle(DECK);
+    render(i);
+  </script>
+</body>
+</html>
